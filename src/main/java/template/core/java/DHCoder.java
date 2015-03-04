@@ -21,98 +21,99 @@ import javax.crypto.spec.SecretKeySpec;
 
 public abstract class DHCoder {
 
-	public static final String KEY_ALGORITHM = "DH";
-	public static final String SECRET_ALGRITHM = "AES";
-	private static final int KEY_SIZE = 512;
-	private static final String PUBLIC_KEY = "DHPublicKey";
-	private static final String PRIVATE_KEY = "DHPrivateKey";
-	
-	/**
-	 * init key for A
-	 * @return the key couple of A
-	 * @throws Exception
-	 */
-	public static Map<String, Object> initKey() throws Exception{
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
-		keyPairGenerator.initialize(KEY_SIZE);
-		KeyPair keyPair = keyPairGenerator.generateKeyPair();
-		DHPublicKey publicKey = (DHPublicKey) keyPair.getPrivate();
-		DHPrivateKey privateKey = (DHPrivateKey) keyPair.getPrivate();
-		
-		Map<String, Object> keyMap = new HashMap<String, Object>(2);
-		keyMap.put(PRIVATE_KEY, publicKey);
-		keyMap.put(PRIVATE_KEY, privateKey);
-		
-		return keyMap;
-	}
-	
-	/**
-	 * init key for B
-	 * @param key the public key of A
-	 * @return the key couple of B
-	 * @throws Exception
-	 */
-	public static Map<String, Object> initKey(byte[] key) throws Exception{
-		X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(key);
-		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-		PublicKey pubKey = keyFactory.generatePublic(x509KeySpec);
-		DHParameterSpec dhParameterSpec = ((DHPublicKey) pubKey).getParams();
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(keyFactory.getAlgorithm());
-		keyPairGenerator.initialize(dhParameterSpec);
-		KeyPair keyPair = keyPairGenerator.genKeyPair();
-		DHPublicKey publicKey = (DHPublicKey) keyPair.getPublic();
-		DHPrivateKey privateKey = (DHPrivateKey) keyPair.getPrivate();
-		
-		Map<String, Object> keyMap = new HashMap<String, Object>(2);
-		keyMap.put(PUBLIC_KEY, publicKey);
-		keyMap.put(PRIVATE_KEY, privateKey);
-		
-		return keyMap;
-	}
-	
-	public static byte[] encrypt(byte[] data, byte[] key) throws Exception{
-		SecretKey secretKey = new SecretKeySpec(key, SECRET_ALGRITHM);
-		Cipher cipher = Cipher.getInstance(secretKey.getAlgorithm());
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		
-		return cipher.doFinal(data);
-	}
-	
-	public static byte[] decrypt(byte[] data, byte[] key) throws Exception{
-		SecretKey secretKey = new SecretKeySpec(key, SECRET_ALGRITHM);
-		Cipher cipher = Cipher.getInstance(secretKey.getAlgorithm());
-		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		
-		return cipher.doFinal(data);
-	}
-	
-	/**
-	 * build the secret key.
-	 * @param publicKey
-	 * @param privateKey
-	 * @return
-	 */
-	public static byte[] getSecretKey(byte[] publicKey, byte[] privateKey) throws Exception{
-		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-		X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKey);
-		PublicKey pubKey = keyFactory.generatePublic(x509EncodedKeySpec);
-		PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey);
-		PrivateKey priKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-		KeyAgreement keyAgree = KeyAgreement.getInstance(keyFactory.getAlgorithm());
-		keyAgree.init(priKey);
-		keyAgree.doPhase(pubKey, true);
-		
-		SecretKey secretKey = keyAgree.generateSecret(SECRET_ALGRITHM);
-		return secretKey.getEncoded();
-	}
-	
-	public static byte[] getPrivateKey(Map<String, Object> keyMap) throws Exception{
-		Key key = (Key) keyMap.get(PRIVATE_KEY);
-		return key.getEncoded();
-	}
-	
-	public static byte[] getPublicKey(Map<String, Object> keyMap) throws Exception{
-		Key key = (Key) keyMap.get(PUBLIC_KEY);
-		return key.getEncoded();
-	}
+    public static final String KEY_ALGORITHM = "DH";
+    public static final String SECRET_ALGRITHM = "AES";
+    private static final int KEY_SIZE = 512;
+    private static final String PUBLIC_KEY = "DHPublicKey";
+    private static final String PRIVATE_KEY = "DHPrivateKey";
+    
+    /**
+     * init key for A
+     * @return the key couple of A
+     * @throws Exception if any of mistake
+     */
+    public static Map<String, Object> initKey() throws Exception{
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
+        keyPairGenerator.initialize(KEY_SIZE);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        DHPublicKey publicKey = (DHPublicKey) keyPair.getPrivate();
+        DHPrivateKey privateKey = (DHPrivateKey) keyPair.getPrivate();
+        
+        Map<String, Object> keyMap = new HashMap<String, Object>(2);
+        keyMap.put(PRIVATE_KEY, publicKey);
+        keyMap.put(PRIVATE_KEY, privateKey);
+        
+        return keyMap;
+    }
+    
+    /**
+     * init key for B
+     * @param key the public key of A
+     * @return the key couple of B
+     * @throws Exception if any of mistake
+     */
+    public static Map<String, Object> initKey(byte[] key) throws Exception{
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(key);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        PublicKey pubKey = keyFactory.generatePublic(x509KeySpec);
+        DHParameterSpec dhParameterSpec = ((DHPublicKey) pubKey).getParams();
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(keyFactory.getAlgorithm());
+        keyPairGenerator.initialize(dhParameterSpec);
+        KeyPair keyPair = keyPairGenerator.genKeyPair();
+        DHPublicKey publicKey = (DHPublicKey) keyPair.getPublic();
+        DHPrivateKey privateKey = (DHPrivateKey) keyPair.getPrivate();
+        
+        Map<String, Object> keyMap = new HashMap<String, Object>(2);
+        keyMap.put(PUBLIC_KEY, publicKey);
+        keyMap.put(PRIVATE_KEY, privateKey);
+        
+        return keyMap;
+    }
+    
+    public static byte[] encrypt(byte[] data, byte[] key) throws Exception{
+        SecretKey secretKey = new SecretKeySpec(key, SECRET_ALGRITHM);
+        Cipher cipher = Cipher.getInstance(secretKey.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        
+        return cipher.doFinal(data);
+    }
+    
+    public static byte[] decrypt(byte[] data, byte[] key) throws Exception{
+        SecretKey secretKey = new SecretKeySpec(key, SECRET_ALGRITHM);
+        Cipher cipher = Cipher.getInstance(secretKey.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        
+        return cipher.doFinal(data);
+    }
+    
+    /**
+     * build the secret key.
+     * @param publicKey public key
+     * @param privateKey private key
+     * @return secret key
+     * @throws Exception if any of mistake
+     */
+    public static byte[] getSecretKey(byte[] publicKey, byte[] privateKey) throws Exception{
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKey);
+        PublicKey pubKey = keyFactory.generatePublic(x509EncodedKeySpec);
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey);
+        PrivateKey priKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+        KeyAgreement keyAgree = KeyAgreement.getInstance(keyFactory.getAlgorithm());
+        keyAgree.init(priKey);
+        keyAgree.doPhase(pubKey, true);
+        
+        SecretKey secretKey = keyAgree.generateSecret(SECRET_ALGRITHM);
+        return secretKey.getEncoded();
+    }
+    
+    public static byte[] getPrivateKey(Map<String, Object> keyMap) throws Exception{
+        Key key = (Key) keyMap.get(PRIVATE_KEY);
+        return key.getEncoded();
+    }
+    
+    public static byte[] getPublicKey(Map<String, Object> keyMap) throws Exception{
+        Key key = (Key) keyMap.get(PUBLIC_KEY);
+        return key.getEncoded();
+    }
 }

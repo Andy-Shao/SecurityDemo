@@ -12,7 +12,7 @@ public class CertificatCoderTest {
 
 	/**
 	 * public key encrypt, private key decrypt.
-	 * @throws Exception 
+	 * @throws Exception if any of mistake
 	 */
 	@Ignore
 	@Test
@@ -29,7 +29,7 @@ public class CertificatCoderTest {
 	
 	/**
 	 * public key decrypt, private key encrypt.
-	 * @throws Exception 
+	 * @throws Exception if any of mistake
 	 */
 	@Ignore
 	@Test
